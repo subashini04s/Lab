@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fee Calculation System</title>
+</head>
+<body>
+  <div id="root">
+    <h1>Fee Calculation System</h1>
+
+    <h2>Add Fee</h2>
+    <form id="fee-form">
+      <label for="exam-name">Exam Name:</label>
+      <input type="text" id="exam-name" name="exam-name" required>
+      
+      <label for="amount">Amount:</label>
+      <input type="number" id="amount" name="amount" required>
+      
+      <button type="submit">Add Fee</button>
+    </form>
+
+    <h2>All Fees</h2>
+    <ul id="fee-list">
+      <!-- Fees will be dynamically added here -->
+    </ul>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const feeForm = document.getElementById('fee-form');
+      const feeList = document.getElementById('fee-list');
+
+      // Function to fetch fees and populate the list
+      const fetchFees = async () => {
+        try {
+          const response = await fetch('/api/fees');
+          const data = await response.json();
+          feeList.innerHTML = ''; // Clear previous data
+          data.forEach(fee => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `Exam Name: ${fee.examName}, Amount: ${fee.amount}`;
+            feeList.appendChild(listItem);
+          });
+        } catch (error) {
+          console.error('Error fetching fees:', error);
+        }
+      };
+
+      // Event listener for fee form submission
+      feeForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        const examName = formData.get('exam-name');
+        const amount = formData.get('amount');
+        try {
+          const response = await fetch('/api/fees', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ examName, amount })
+          });
+          if (!response.ok) {
+            throw new Error('Failed to add fee');
+          }
+          fetchFees(); // Refresh fee list
+          feeForm.reset(); // Clear form fields
+        } catch (error) {
+          console.error('Error adding fee:', error);
+        }
+      });
+
+      // Fetch initial fees when the page loads
+      fetchFees();
+    });
+  </script>
+  <!-- JavaScript code goes here -->
+</body>
+</html>
+
