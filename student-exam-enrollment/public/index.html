@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Exam Enrollment System</title>
+</head>
+<body>
+  <h1>Student Exam Enrollment System</h1>
+  
+  <h2>Enroll Student</h2>
+  <form id="enrollment-form">
+    <label for="student-name">Student Name:</label>
+    <input type="text" id="student-name" name="student-name" required>
+    
+    <label for="exam-name">Exam Name:</label>
+    <input type="text" id="exam-name" name="exam-name" required>
+    
+    <button type="submit">Enroll</button>
+  </form>
+
+  <h2>All Enrollments</h2>
+  <ul id="enrollments-list"></ul>
+
+  <script>
+    const enrollmentForm = document.getElementById('enrollment-form');
+    const enrollmentsList = document.getElementById('enrollments-list');
+
+    const fetchEnrollments = async () => {
+      try {
+        const response = await fetch('/api/enrollments');
+        const data = await response.json();
+        enrollmentsList.innerHTML = '';
+        data.forEach(enrollment => {
+          const listItem = document.createElement('li');
+          listItem.textContent = `ID: ${enrollment.id} - Student Name: ${enrollment.studentName}, Exam Name: ${enrollment.examName}`;
+          enrollmentsList.appendChild(listItem);
+        });
+      } catch (error) {
+        console.error('Error fetching enrollments:', error);
+      }
+    };
+
+    enrollmentForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const formData = new FormData(enrollmentForm);
+      const studentName = formData.get('student-name');
+      const examName = formData.get('exam-name');
+      try {
+        const response = await fetch('/api/enrollments', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ studentName, examName })
+        });
+        if (!response.ok) {
+          throw new Error('Failed to enroll student');
+        }
+        fetchEnrollments();
+      } catch (error) {
+        console.error('Error enrolling student:', error);
+      }
+    });
+
+    fetchEnrollments();
+  </script>
+</body>
+</html>
+
