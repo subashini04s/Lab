@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './Appl.css';
-
 function App() {
   const [fees, setFees] = useState([]);
   const [examName, setExamName] = useState('');
   const [amount, setAmount] = useState('');
-
   useEffect(() => {
     fetchFees();
   }, []);
-
   const fetchFees = async () => {
     try {
       const response = await fetch('/api/fees');
@@ -19,7 +16,6 @@ function App() {
       console.error('Error fetching fees:', error);
     }
   };
-
   const handleAddFee = async (event) => {
     event.preventDefault();
     try {
@@ -40,7 +36,6 @@ function App() {
       console.error('Error adding fee:', error);
     }
   };
-
   const handleUpdateFee = async (id, newExamName, newAmount) => {
     try {
       const response = await fetch(`/api/fees/${id}`, {
@@ -58,7 +53,6 @@ function App() {
       console.error('Error updating fee:', error);
     }
   };
-
   return (
     <div className="App">
       <h1>Fee Calculation System</h1>
@@ -82,5 +76,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
