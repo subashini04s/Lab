@@ -1,0 +1,11 @@
+.container {
+max-width: 400px;
+margin: 50px auto;
+text-align: center;
+} 
+button {
+padding: 10px 20px;
+margin-top: 20px;
+cursor: pointer;
+}
+  
